@@ -1,4 +1,4 @@
-const CACHE_NAME = 'store-data-v7'; // ✅ ভার্সন বাড়ানো হলো — auth-bounce fix সহ নতুন index.html সবার কাছে পৌঁছাবে
+const CACHE_NAME = 'store-data-v8'; // ✅ malformed-request fix সহ নতুন index.html সবার কাছে পৌঁছাতে version আবার বাড়ানো হলো
 const ASSETS = ['index.html', 'manifest.json', 'offline.html'];
 
 const OFFLINE_HTML = `<!DOCTYPE html>
