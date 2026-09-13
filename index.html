@@ -6,14 +6,15 @@
     <!-- ══ AUTH BOUNCE (নতুন) ══
          Google-এর sign-in/consent page কখনো iframe-এর ভেতরে খুলতে দেয় না।
          তাই নতুন/unauthenticated user-কে প্রথমে top-level এ Apps Script URL-এ
-         পাঠিয়ে Google login সম্পন্ন করানো হয়, তারপর সে আবার এই wrapper পেজে
-         ফিরে আসে (Code.gs-এর doGet()-এ ?pwaReturn হ্যান্ডলিং যোগ করতে হবে)। -->
+         পাঠিয়ে Google login সম্পন্ন করানো হয় (কোনো query parameter ছাড়া —
+         parameter থাকলে Google-এর login redirect "malformed request" এরর দেয়)।
+         Apps Script নিজেই (iframe-এ নেই বুঝে) ফিরিয়ে আনবে। -->
     <script>
     (function () {
         var EXEC_URL = "https://script.google.com/macros/s/AKfycbwID05WvXvfK-J4r5P1AW1RbW0dAqiLCZZNN01vdgEG2KcLIP6z9faOQavH4yrDYWSV/exec";
         var params = new URLSearchParams(window.location.search);
 
-        // Apps Script থেকে ফিরে আসার সময় ?authed=1 নিয়ে আসে — তখন flag সেভ করে URL পরিষ্কার করা হচ্ছে
+        // Apps Script থেকে ফিরে আসার সময় ?authed=1 নিয়ে আসে — flag সেভ করে URL পরিষ্কার করা হচ্ছে
         if (params.get('authed') === '1') {
             try { localStorage.setItem('gasAuthConfirmed', 'true'); } catch (e) {}
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -23,8 +24,7 @@
         try { alreadyAuthed = localStorage.getItem('gasAuthConfirmed') === 'true'; } catch (e) {}
 
         if (!alreadyAuthed) {
-            var wrapperUrl = window.location.origin + window.location.pathname;
-            window.location.href = EXEC_URL + "?pwaReturn=" + encodeURIComponent(wrapperUrl);
+            window.location.href = EXEC_URL; // ✅ কোনো query parameter নেই — malformed error এড়াতে
         }
     })();
     </script>
